@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Interactor;
 
+use Closure;
 use Elastic\Apm\DistributedTracingData;
+use Elastic\Apm\SpanInterface;
 use Elastic\Apm\TransactionInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -85,6 +87,34 @@ class LoggingInteractorDecorator implements ElasticApmInteractorInterface
         $this->logger->debug('Starting a new Elastic APM transaction and setting to current for app {name}', ['name' => $name]);
 
         return $this->interactor->beginCurrentTransaction($name, $type, $timestamp, $distributedTracingData);
+    }
+
+    public function getCurrentTransaction(): ?TransactionInterface
+    {
+        $this->logger->debug('Getting active transaction');
+
+        return $this->interactor->getCurrentTransaction();
+    }
+
+    public function beginCurrentSpan(string $name, string $type, ?string $subtype = null, ?string $action = null, ?float $timestamp = null): ?SpanInterface
+    {
+        $this->logger->debug('Starting new span on current transaction and making it current');
+
+        return $this->interactor->beginCurrentSpan($name, $type, $subtype, $action, $timestamp);
+    }
+
+    public function endCurrentSpan(?float $duration = null): bool
+    {
+        $this->logger->debug('Ending current span on active transaction');
+
+        return $this->interactor->endCurrentSpan($duration);
+    }
+
+    public function captureCurrentSpan(string $name, string $type, Closure $callback, ?string $subtype = null, ?string $action = null, ?float $timestamp = null)
+    {
+        $this->logger->debug('Starting new span capture');
+
+        return $this->interactor->captureCurrentSpan($name, $type, $callback, $subtype, $action, $timestamp);
     }
 
     public function setUserAttributes(?string $id, ?string $email, ?string $username): bool

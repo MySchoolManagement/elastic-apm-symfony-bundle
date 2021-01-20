@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Interactor;
 
+use Closure;
 use Elastic\Apm\DistributedTracingData;
+use Elastic\Apm\SpanInterface;
 use Elastic\Apm\TransactionInterface;
 
 /**
@@ -55,6 +57,26 @@ class BlackholeInteractor implements ElasticApmInteractorInterface
     public function endCurrentTransaction(?float $duration = null): bool
     {
         return true;
+    }
+
+    public function getCurrentTransaction(): ?TransactionInterface
+    {
+        return null;
+    }
+
+    public function beginCurrentSpan(string $name, string $type, ?string $subtype = null, ?string $action = null, ?float $timestamp = null): ?SpanInterface
+    {
+        return null;
+    }
+
+    public function endCurrentSpan(?float $duration = null): bool
+    {
+        return true;
+    }
+
+    public function captureCurrentSpan(string $name, string $type, Closure $callback, ?string $subtype = null, ?string $action = null, ?float $timestamp = null)
+    {
+        return $callback(null);
     }
 
     public function setUserAttributes(?string $id, ?string $email, ?string $username): bool

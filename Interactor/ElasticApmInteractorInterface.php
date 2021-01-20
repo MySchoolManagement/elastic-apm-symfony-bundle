@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Interactor;
 
+use Closure;
 use Elastic\Apm\DistributedTracingData;
+use Elastic\Apm\SpanInterface;
 use Elastic\Apm\TransactionInterface;
 
 /**
@@ -67,6 +69,36 @@ interface ElasticApmInteractorInterface
      * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-transaction-interface-end}
      */
     public function endCurrentTransaction(?float $duration = null): bool;
+
+    /**
+     * Get the active transaction.
+     *
+     * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-elasticapm-class-get-current-transaction}
+     */
+    public function getCurrentTransaction(): ?TransactionInterface;
+
+    /**
+     * Starts a new span on the active transaction and makes it current.
+     *
+     * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-transaction-interface-begin-current-span}
+     */
+    public function beginCurrentSpan(string $name, string $type, ?string $subtype = null, ?string $action = null, ?float $timestamp = null): ?SpanInterface;
+
+    /**
+     * Stops the active span on the active transaction.
+     *
+     * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-span-interface-end}
+     */
+    public function endCurrentSpan(?float $duration = null): bool;
+
+    /**
+     * Begings a new span marks it as active then closes the span after the callbable has executed.
+     *
+     * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-transaction-interface-capture-current-span}
+     *
+     * @return mixed
+     */
+    public function captureCurrentSpan(string $name, string $type, Closure $callback, ?string $subtype = null, ?string $action = null, ?float $timestamp = null);
 
     /**
      * WARNING: The agent does not allow setting of user attributes yet. These are attached as labels which can have an

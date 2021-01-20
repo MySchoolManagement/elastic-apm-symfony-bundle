@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Interactor;
 
+use Closure;
 use Elastic\Apm\DistributedTracingData;
+use Elastic\Apm\SpanInterface;
 use Elastic\Apm\TransactionInterface;
 
 /**
@@ -69,6 +71,33 @@ class AdaptiveInteractor implements ElasticApmInteractorInterface
     {
         return $this->interactor->endCurrentTransaction($duration);
     }
+
+    public function getCurrentTransaction(): ?TransactionInterface
+    {
+        return $this->interactor->getCurrentTransaction();
+    }
+
+    public function beginCurrentSpan(string $name, string $type, ?string $subtype = null, ?string $action = null, ?float $timestamp = null): ?SpanInterface
+    {
+        $current = $this->interactor->getCurrentTransaction();
+
+        if (null !== $current) {
+            return $current->beginCurrentSpan($name, $type, $subtype, $action, $timestamp);
+        }
+
+        return null;
+    }
+
+    public function endCurrentSpan(?float $duration = null): bool
+    {
+        return $this->interactor->endCurrentSpan($duration);
+    }
+
+    public function captureCurrentSpan(string $name, string $type, Closure $callback, ?string $subtype = null, ?string $action = null, ?float $timestamp = null)
+    {
+        return $this->interactor->captureCurrentSpan($name, $type, $callback, $subtype, $action, $timestamp);
+    }
+
 
     public function setUserAttributes(?string $id, ?string $email, ?string $username): bool
     {
