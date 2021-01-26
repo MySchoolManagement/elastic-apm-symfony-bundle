@@ -92,7 +92,7 @@ interface ElasticApmInteractorInterface
     public function endCurrentSpan(?float $duration = null): bool;
 
     /**
-     * Begings a new span marks it as active then closes the span after the callbable has executed.
+     * Begins a new span marks it as active then closes the span after the callbable has executed.
      *
      * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-transaction-interface-capture-current-span}
      *

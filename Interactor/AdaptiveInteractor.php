@@ -98,7 +98,6 @@ class AdaptiveInteractor implements ElasticApmInteractorInterface
         return $this->interactor->captureCurrentSpan($name, $type, $callback, $subtype, $action, $timestamp);
     }
 
-
     public function setUserAttributes(?string $id, ?string $email, ?string $username): bool
     {
         return $this->interactor->setUserAttributes($id, $email, $username);
