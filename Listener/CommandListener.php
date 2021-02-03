@@ -66,10 +66,22 @@ class CommandListener implements EventSubscriberInterface
                 $this->interactor->addCustomContext($key, $value);
             }
         }
+
+        foreach ($this->config->getCustomLabels() as $name => $value) {
+            $this->interactor->addLabel((string) $name, $value);
+        }
+
+        foreach ($this->config->getCustomContext() as $name => $value) {
+            $this->interactor->addCustomContext((string) $name, $value);
+        }
     }
 
     public function onConsoleError(ConsoleErrorEvent $event): void
     {
         $this->interactor->noticeThrowable($event->getError());
+
+        if (null !== $event->getError()->getPrevious()) {
+            $this->interactor->noticeThrowable($event->getError()->getPrevious());
+        }
     }
 }
