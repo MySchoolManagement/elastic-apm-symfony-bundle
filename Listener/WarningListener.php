@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Listener;
 
-use ElasticApmBundle\Exception\DeprecationException;
+use ElasticApmBundle\Exception\WarningException;
 use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 
-class DeprecationListener
+class WarningListener
 {
     private $isRegistered = false;
     private $interactor;
@@ -37,16 +37,18 @@ class DeprecationListener
         $this->isRegistered = true;
 
         $prevErrorHandler = \set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$prevErrorHandler) {
-            if (E_USER_DEPRECATED === $type) {
-                foreach ($this->config->getCustomLabels() as $name => $value) {
-                    $this->interactor->addLabel((string) $name, $value);
-                }
+            switch($type) {
+                case E_WARNING:
+                case E_USER_WARNING:
+                    foreach ($this->config->getCustomLabels() as $name => $value) {
+                        $this->interactor->addLabel((string) $name, $value);
+                    }
+    
+                    foreach ($this->config->getCustomContext() as $name => $value) {
+                        $this->interactor->addCustomContext((string) $name, $value);
+                    }
 
-                foreach ($this->config->getCustomContext() as $name => $value) {
-                    $this->interactor->addCustomContext((string) $name, $value);
-                }
-
-                $this->interactor->noticeThrowable(new DeprecationException($msg, 0, $type, $file, $line));
+                    $this->interactor->noticeThrowable(new WarningException($msg, 0, $type, $file, $line));
             }
 
             return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;

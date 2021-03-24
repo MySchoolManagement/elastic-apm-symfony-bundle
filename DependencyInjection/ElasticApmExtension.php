@@ -77,6 +77,10 @@ class ElasticApmExtension extends Extension
         if ($config['deprecations']['enabled']) {
             $loader->load('deprecation_listener.xml');
         }
+
+        if ($config['warnings']['enabled']) {
+            $loader->load('warning_listener.xml');
+        }
     }
 
     private function getInteractorServiceId(array $config): string
