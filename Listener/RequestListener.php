@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Listener;
 
-use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 use ElasticApmBundle\TransactionNamingStrategy\TransactionNamingStrategyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,16 +23,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequestListener implements EventSubscriberInterface
 {
-    private $config;
     private $interactor;
     private $transactionNamingStrategy;
 
     public function __construct(
-        Config $config,
         ElasticApmInteractorInterface $interactor,
         TransactionNamingStrategyInterface $transactionNamingStrategy
     ) {
-        $this->config = $config;
         $this->interactor = $interactor;
         $this->transactionNamingStrategy = $transactionNamingStrategy;
     }

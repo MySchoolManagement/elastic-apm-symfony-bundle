@@ -14,19 +14,16 @@ declare(strict_types=1);
 namespace ElasticApmBundle\Listener;
 
 use ElasticApmBundle\Exception\DeprecationException;
-use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 
 class DeprecationListener
 {
     private $isRegistered = false;
     private $interactor;
-    private $config;
 
-    public function __construct(ElasticApmInteractorInterface $interactor, Config $config)
+    public function __construct(ElasticApmInteractorInterface $interactor)
     {
         $this->interactor = $interactor;
-        $this->config = $config;
     }
 
     public function register(): void
@@ -38,14 +35,7 @@ class DeprecationListener
 
         $prevErrorHandler = \set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$prevErrorHandler) {
             if (E_USER_DEPRECATED === $type) {
-                foreach ($this->config->getCustomLabels() as $name => $value) {
-                    $this->interactor->addLabel((string) $name, $value);
-                }
-
-                foreach ($this->config->getCustomContext() as $name => $value) {
-                    $this->interactor->addCustomContext((string) $name, $value);
-                }
-
+                $this->interactor->addContextFromConfig();
                 $this->interactor->noticeThrowable(new DeprecationException($msg, 0, $type, $file, $line));
             }
 

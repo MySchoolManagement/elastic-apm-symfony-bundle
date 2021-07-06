@@ -21,6 +21,13 @@ use Elastic\Apm\TransactionInterface;
 
 class ElasticApmInteractor implements ElasticApmInteractorInterface
 {
+    private $config;
+
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
+
     public function setTransactionName(string $name): bool
     {
         $transaction = ElasticApm::getCurrentTransaction();
@@ -104,5 +111,16 @@ class ElasticApmInteractor implements ElasticApmInteractorInterface
         }
 
         return true;
+    }
+
+    public function addContextFromConfig(): void
+    {
+        foreach ($this->config->getCustomLabels() as $name => $value) {
+            $this->addLabel((string) $name, $value);
+        }
+
+        foreach ($this->config->getCustomContext() as $name => $value) {
+            $this->addCustomContext((string) $name, $value);
+        }
     }
 }

@@ -14,19 +14,16 @@ declare(strict_types=1);
 namespace ElasticApmBundle\Listener;
 
 use ElasticApmBundle\Exception\WarningException;
-use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 
 class WarningListener
 {
     private $isRegistered = false;
     private $interactor;
-    private $config;
 
-    public function __construct(ElasticApmInteractorInterface $interactor, Config $config)
+    public function __construct(ElasticApmInteractorInterface $interactor)
     {
         $this->interactor = $interactor;
-        $this->config = $config;
     }
 
     public function register(): void
@@ -40,14 +37,7 @@ class WarningListener
             switch($type) {
                 case E_WARNING:
                 case E_USER_WARNING:
-                    foreach ($this->config->getCustomLabels() as $name => $value) {
-                        $this->interactor->addLabel((string) $name, $value);
-                    }
-    
-                    foreach ($this->config->getCustomContext() as $name => $value) {
-                        $this->interactor->addCustomContext((string) $name, $value);
-                    }
-
+                    $this->interactor->addContextFromConfig();
                     $this->interactor->noticeThrowable(new WarningException($msg, 0, $type, $file, $line));
             }
 

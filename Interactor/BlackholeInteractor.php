@@ -83,4 +83,8 @@ class BlackholeInteractor implements ElasticApmInteractorInterface
     {
         return true;
     }
+
+    public function addContextFromConfig(): void
+    {
+    }
 }

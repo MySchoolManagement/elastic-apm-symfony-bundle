@@ -102,4 +102,9 @@ class AdaptiveInteractor implements ElasticApmInteractorInterface
     {
         return $this->interactor->setUserAttributes($id, $email, $username);
     }
+
+    public function addContextFromConfig(): void
+    {
+        $this->interactor->addContextFromConfig();
+    }
 }

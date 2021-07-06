@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Listener;
 
-use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -23,11 +22,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CommandListener implements EventSubscriberInterface
 {
     private $interactor;
-    private $config;
 
-    public function __construct(Config $config, ElasticApmInteractorInterface $interactor)
+    public function __construct(ElasticApmInteractorInterface $interactor)
     {
-        $this->config = $config;
         $this->interactor = $interactor;
     }
 
@@ -67,13 +64,7 @@ class CommandListener implements EventSubscriberInterface
             }
         }
 
-        foreach ($this->config->getCustomLabels() as $name => $value) {
-            $this->interactor->addLabel((string) $name, $value);
-        }
-
-        foreach ($this->config->getCustomContext() as $name => $value) {
-            $this->interactor->addCustomContext((string) $name, $value);
-        }
+        $this->interactor->addContextFromConfig();
     }
 
     public function onConsoleError(ConsoleErrorEvent $event): void

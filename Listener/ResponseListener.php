@@ -22,14 +22,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class ResponseListener implements EventSubscriberInterface
 {
-    private $config;
     private $interactor;
 
     public function __construct(
-        Config $config,
         ElasticApmInteractorInterface $interactor
     ) {
-        $this->config = $config;
         $this->interactor = $interactor;
     }
 
@@ -48,13 +45,7 @@ class ResponseListener implements EventSubscriberInterface
             return;
         }
 
-        foreach ($this->config->getCustomLabels() as $name => $value) {
-            $this->interactor->addLabel((string) $name, $value);
-        }
-
-        foreach ($this->config->getCustomContext() as $name => $value) {
-            $this->interactor->addCustomContext((string) $name, $value);
-        }
+        $this->interactor->addContextFromConfig();
     }
 }
 

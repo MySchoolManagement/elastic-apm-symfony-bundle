@@ -28,13 +28,11 @@ class ExceptionListener implements EventSubscriberInterface
 {
     private $interactor;
     private $ignoredExceptions;
-    private $config;
 
-    public function __construct(Config $config, ElasticApmInteractorInterface $interactor, array $ignoredExceptions)
+    public function __construct(ElasticApmInteractorInterface $interactor, array $ignoredExceptions)
     {
         $this->interactor = $interactor;
         $this->ignoredExceptions = $ignoredExceptions;
-        $this->config = $config;
     }
 
     public static function getSubscribedEvents(): array
@@ -51,14 +49,7 @@ class ExceptionListener implements EventSubscriberInterface
     {
         $exception = \method_exists($event, 'getThrowable') ? $event->getThrowable() : $event->getException();
         if (! $exception instanceof HttpExceptionInterface && ! in_array(get_class($exception), $this->ignoredExceptions)) {
-            foreach ($this->config->getCustomLabels() as $name => $value) {
-                $this->interactor->addLabel((string) $name, $value);
-            }
-
-            foreach ($this->config->getCustomContext() as $name => $value) {
-                $this->interactor->addCustomContext((string) $name, $value);
-            }
-
+            $this->interactor->addContextFromConfig();
             $this->interactor->noticeThrowable($exception);
         }
     }

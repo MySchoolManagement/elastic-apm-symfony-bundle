@@ -105,4 +105,9 @@ interface ElasticApmInteractorInterface
      * impact on the size and performance of your indexes.
      */
     public function setUserAttributes(?string $id, ?string $email, ?string $username): bool;
+
+    /**
+     * Adds the custom context and labels defined in the user configuration to the active transaction.
+     */
+    public function addContextFromConfig(): void;
 }

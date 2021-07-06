@@ -123,4 +123,11 @@ class LoggingInteractorDecorator implements ElasticApmInteractorInterface
 
         return $this->interactor->setUserAttributes($id, $email, $username);
     }
+
+    public function addContextFromConfig(): void
+    {
+        $this->logger->debug('Adding context from config');
+
+        $this->interactor->addContextFromConfig();
+    }
 }
