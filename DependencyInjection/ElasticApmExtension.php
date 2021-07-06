@@ -52,6 +52,8 @@ class ElasticApmExtension extends Extension
                 [
                     '$customLabels' => $config['custom_labels'],
                     '$customContext' => $config['custom_context'],
+                    '$shouldCollectMemoryUsage' => $config['track_memory_usage'],
+                    '$memoryUsageLabelName' => $config['memory_usage_label'],
                 ]
             );
 

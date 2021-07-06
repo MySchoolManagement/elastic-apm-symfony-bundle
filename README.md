@@ -65,6 +65,8 @@ elastic_apm:
     logging: false                        # If true, logs all interactions to the Symfony log (default: false)
     interactor: ~                         # The interactor service that is used. Setting enabled=false will override this value 
     deprecations: true                    # If true, reports deprecations to Elastic APM (default: true)
+    track_memory_usage: false             # If true, records peak memory usage
+    memory_usage_label: memory_usage      # The name of the custom label to write memory usage to
     exceptions:
        enabled: true                      # If true, sends exceptions (default: true)
        ignored_exceptions:                # List of exception classes to ignore

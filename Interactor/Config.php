@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Interactor;
 
+use ElasticApmBundle\Exception\ConfigurationException;
+
 /**
  * This value object contains data and configuration that should be passed to the interactors.
  */
@@ -20,11 +22,19 @@ class Config
 {
     private $customLabels;
     private $customContext;
+    private $shouldCollectMemoryUsage;
+    private $memoryUsageLabelName;
 
-    public function __construct(array $customLabels, array $customContext)
+    public function __construct(array $customLabels, array $customContext, bool $shouldCollectMemoryUsage, string $memoryUsageLabelName)
     {
+        if (0 === strlen($memoryUsageLabelName)) {
+            throw new ConfigurationException('$memoryUsageLabelName cannot be blank');
+        }
+
         $this->customLabels = $customLabels;
         $this->customContext = $customContext;
+        $this->shouldCollectMemoryUsage = $shouldCollectMemoryUsage;
+        $this->memoryUsageLabelName = $memoryUsageLabelName;
     }
 
     public function setCustomLabels(array $customLabels): void
@@ -61,5 +71,15 @@ class Config
     public function getCustomContext(): array
     {
         return $this->customContext;
+    }
+
+    public function shouldCollectMemoryUsage(): bool
+    {
+        return $this->shouldCollectMemoryUsage;
+    }
+
+    public function getMemoryUsageLabelName(): string
+    {
+        return $this->memoryUsageLabelName;
     }
 }

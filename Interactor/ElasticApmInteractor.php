@@ -115,6 +115,10 @@ class ElasticApmInteractor implements ElasticApmInteractorInterface
 
     public function addContextFromConfig(): void
     {
+        if ($this->config->shouldCollectMemoryUsage()) {
+            $this->addLabel($this->config->getMemoryUsageLabelName(), memory_get_peak_usage(true));
+        }
+
         foreach ($this->config->getCustomLabels() as $name => $value) {
             $this->addLabel((string) $name, $value);
         }
