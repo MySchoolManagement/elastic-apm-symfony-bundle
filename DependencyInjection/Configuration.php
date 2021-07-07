@@ -79,6 +79,12 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('commands')
                     ->canBeDisabled()
+                    ->children()
+                        ->booleanNode('explicitly_collect_exceptions')
+                            ->info('Should exceptions be explicitly collected? This can conflict with the built-in collection in PHP APM')
+                            ->defaultTrue()
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;

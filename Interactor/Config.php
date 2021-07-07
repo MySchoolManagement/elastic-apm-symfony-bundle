@@ -24,8 +24,9 @@ class Config
     private $customContext;
     private $shouldCollectMemoryUsage;
     private $memoryUsageLabelName;
+    private $shouldExplicitlyCollectCommandExceptions;
 
-    public function __construct(array $customLabels, array $customContext, bool $shouldCollectMemoryUsage, string $memoryUsageLabelName)
+    public function __construct(array $customLabels, array $customContext, bool $shouldCollectMemoryUsage, string $memoryUsageLabelName, bool $shouldExplicitlyCollectCommandExceptions)
     {
         if (0 === strlen($memoryUsageLabelName)) {
             throw new ConfigurationException('$memoryUsageLabelName cannot be blank');
@@ -35,6 +36,7 @@ class Config
         $this->customContext = $customContext;
         $this->shouldCollectMemoryUsage = $shouldCollectMemoryUsage;
         $this->memoryUsageLabelName = $memoryUsageLabelName;
+        $this->shouldExplicitlyCollectCommandExceptions = $shouldExplicitlyCollectCommandExceptions;
     }
 
     public function setCustomLabels(array $customLabels): void
@@ -81,5 +83,10 @@ class Config
     public function getMemoryUsageLabelName(): string
     {
         return $this->memoryUsageLabelName;
+    }
+
+    public function shouldExplicitlyCollectCommandExceptions(): bool
+    {
+        return $this->shouldExplicitlyCollectCommandExceptions;
     }
 }

@@ -77,6 +77,7 @@ elastic_apm:
         transaction_naming_service: ~     # Transaction naming service (see below)
     commands: 
         enabled: true                     # If true, enhances CLI commands with options and arguments (default: true)
+        explicitly_collect_exceptions: true # Turn this off if you are experiencing multiple reports of exceptions.
 ```
 
 ## Enhanced RUM instrumentation
@@ -129,6 +130,15 @@ monolog:
         type: service
         id: 'Monolog\Handler\ElasticsearchHandler'
 ```
+
+## Troubleshooting
+
+### Exceptions from commands are being recorded multiple times
+
+PHP APM will automatically collect unhandled exceptions. The bundle will also install a listener for command exceptions. Our listener and the default behaviour can conflict which causes this behaviour. 
+
+To fix this you can turn off `explicitly_collect_exceptions` under the `command` configuration node.
+
 
 ## Credits
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace ElasticApmBundle\Listener;
 
+use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -22,10 +23,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CommandListener implements EventSubscriberInterface
 {
     private $interactor;
+    private $config;
 
-    public function __construct(ElasticApmInteractorInterface $interactor)
+    public function __construct(ElasticApmInteractorInterface $interactor, Config $config)
     {
         $this->interactor = $interactor;
+        $this->config = $config;
     }
 
     public static function getSubscribedEvents(): array
@@ -69,9 +72,15 @@ class CommandListener implements EventSubscriberInterface
 
     public function onConsoleError(ConsoleErrorEvent $event): void
     {
+        if (! $this->config->shouldExplicitlyCollectCommandExceptions()) {
+            return;
+        }
+
+        $this->interactor->addContextFromConfig();
         $this->interactor->noticeThrowable($event->getError());
 
         if (null !== $event->getError()->getPrevious()) {
+            $this->interactor->addContextFromConfig();
             $this->interactor->noticeThrowable($event->getError()->getPrevious());
         }
     }
