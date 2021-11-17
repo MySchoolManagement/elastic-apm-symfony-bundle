@@ -52,7 +52,7 @@ class ElasticApmInteractor implements ElasticApmInteractorInterface
         return $this->addLabel($name, $value);
     }
 
-    public function noticeThrowable(\Throwable $e, string $message = null): void
+    public function noticeThrowable(\Throwable $e): void
     {
         ElasticApm::createErrorFromThrowable($e);
     }

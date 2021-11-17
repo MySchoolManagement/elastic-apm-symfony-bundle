@@ -59,13 +59,13 @@ class LoggingInteractorDecorator implements ElasticApmInteractorInterface
         return $this->interactor->addCustomContext($name, $value);
     }
 
-    public function noticeThrowable(\Throwable $e, string $message = null): void
+    public function noticeThrowable(\Throwable $e): void
     {
         $this->logger->debug('Sending exception to Elastic APM', [
             'message' => $message,
             'exception' => $e,
         ]);
-        $this->interactor->noticeThrowable($e, $message);
+        $this->interactor->noticeThrowable($e);
     }
 
     public function endCurrentTransaction(?float $duration = null): bool
