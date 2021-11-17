@@ -33,7 +33,7 @@ interface ElasticApmInteractorInterface
     /**
      * {@link https://www.elastic.co/guide/en/apm/agent/php/current/public-api.html#api-transaction-interface-set-label}.
      *
-     * @param string|int|float $value should be a scalar
+     * @param string|bool|int|float|null $value should be a scalar
      */
     public function addLabel(string $name, $value): bool;
 
