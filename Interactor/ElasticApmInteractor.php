@@ -41,7 +41,7 @@ class ElasticApmInteractor implements ElasticApmInteractorInterface
         // limited to 1024 bytes in label key/value
         ElasticApm::getCurrentTransaction()->context()->setLabel(
             mb_substr($name, 0, 1024),
-            mb_substr((string) $value, 0, 1024)
+            is_string($value) ? mb_substr($value, 0, 1024) : $value
         );
 
         return true;
