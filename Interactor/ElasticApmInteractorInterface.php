@@ -49,7 +49,7 @@ interface ElasticApmInteractorInterface
      * Use these calls to collect errors that the PHP agent does not collect automatically and to set the callback for
      * your own error and exception handler.
      */
-    public function noticeThrowable(\Throwable $e, string $message = null): void;
+    public function noticeThrowable(\Throwable $e): void;
 
     /**
      * Starts a new transaction.

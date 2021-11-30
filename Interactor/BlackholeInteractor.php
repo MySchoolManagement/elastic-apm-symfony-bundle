@@ -40,7 +40,7 @@ class BlackholeInteractor implements ElasticApmInteractorInterface
         return true;
     }
 
-    public function noticeThrowable(\Throwable $e, string $message = null): void
+    public function noticeThrowable(\Throwable $e): void
     {
     }
 

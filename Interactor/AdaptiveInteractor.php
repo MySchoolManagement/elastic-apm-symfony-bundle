@@ -52,9 +52,9 @@ class AdaptiveInteractor implements ElasticApmInteractorInterface
         return $this->interactor->addCustomContext($name, $value);
     }
 
-    public function noticeThrowable(\Throwable $e, string $message = null): void
+    public function noticeThrowable(\Throwable $e): void
     {
-        $this->interactor->noticeThrowable($e, $message);
+        $this->interactor->noticeThrowable($e);
     }
 
     public function beginTransaction(string $name, string $type, ?float $timestamp = null, ?DistributedTracingData $distributedTracingData = null): ?TransactionInterface
