@@ -2,7 +2,6 @@ Elastic APM Symfony Bundle
 =====================
 
 [![Latest Version](https://img.shields.io/github/release/MySchoolManagement/elastic-apm-symfony-bundle.svg?style=flat-square)](https://github.com/myschoolmanagement/elastic-apm-symfony-bundle/releases)
-[![Quality Score](https://img.shields.io/scrutinizer/g/MySchoolManagement/elastic-apm-symfony-bundle.svg?style=flat-square)](https://scrutinizer-ci.com/g/MySchoolManagement/elastic-apm-symfony-bundle)
 [![Total Downloads](https://img.shields.io/packagist/dt/myschoolmanagement/elastic-apm-symfony-bundle.svg?style=flat-square)](https://packagist.org/packages/myschoolmanagement/elastic-apm-symfony-bundle)
 
 This bundle integrates the Elastic APM PHP API into Symfony. For more information about Elastic APM, please visit https://www.elastic.co/apm. This bundle adds a lot more essentials. Here's a quick list:
