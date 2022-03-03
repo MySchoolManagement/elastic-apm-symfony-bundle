@@ -17,6 +17,7 @@ use Closure;
 use Elastic\Apm\DistributedTracingData;
 use Elastic\Apm\ElasticApm;
 use Elastic\Apm\SpanInterface;
+use Elastic\Apm\TransactionBuilderInterface;
 use Elastic\Apm\TransactionInterface;
 
 class ElasticApmInteractor implements ElasticApmInteractorInterface
@@ -59,12 +60,46 @@ class ElasticApmInteractor implements ElasticApmInteractorInterface
 
     public function beginTransaction(string $name, string $type, ?float $timestamp = null, ?DistributedTracingData $distributedTracingData = null): ?TransactionInterface
     {
-        return ElasticApm::beginTransaction($name, $type, $timestamp, $distributedTracingData);
+        if (version_compare(ElasticApm::VERSION, '1.3.0', '<')) {
+            return ElasticApm::beginTransaction($name, $type, $timestamp, $distributedTracingData ? $distributedTracingData->serializeToString() : null);
+        }
+
+        return $this->createTransactionBuilder($name, $type, $timestamp, $distributedTracingData)
+            ->begin();
     }
 
     public function beginCurrentTransaction(string $name, string $type, ?float $timestamp = null, ?DistributedTracingData $distributedTracingData = null): ?TransactionInterface
     {
-        return ElasticApm::beginCurrentTransaction($name, $type, $timestamp, $distributedTracingData);
+        if (version_compare(ElasticApm::VERSION, '1.3.0', '<')) {
+            return ElasticApm::beginCurrentTransaction($name, $type, $timestamp, $distributedTracingData ? $distributedTracingData->serializeToString() : null);
+        }
+
+        return $this->createTransactionBuilder($name, $type, $timestamp, $distributedTracingData)
+            ->asCurrent()
+            ->begin();
+    }
+
+    private function createTransactionBuilder(string $name, string $type, ?float $timestamp = null, ?DistributedTracingData $distributedTracingData = null): TransactionBuilderInterface
+    {
+        $t = ElasticApm::newTransaction($name, $type);
+
+        if (null !== $timestamp) {
+            $t->timestamp($timestamp);
+        }
+
+        if (null !== $distributedTracingData) {
+            $t->distributedTracingHeaderExtractor(
+                function ($a) use ($distributedTracingData) {
+                    if ('traceparent' === $a) {
+                        return $distributedTracingData->serializeToString();
+                    }
+
+                    return null;
+                }
+            );
+        }
+
+        return $t;
     }
 
     public function endCurrentTransaction(?float $duration = null): bool
