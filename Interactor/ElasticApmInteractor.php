@@ -56,6 +56,10 @@ class ElasticApmInteractor implements ElasticApmInteractorInterface
     public function noticeThrowable(\Throwable $e): void
     {
         ElasticApm::createErrorFromThrowable($e);
+
+        if ($this->config->shouldUnwrapExceptions() && null !== $e->getPrevious()) {
+            ElasticApm::createErrorFromThrowable($e->getPrevious());
+        }
     }
 
     public function beginTransaction(string $name, string $type, ?float $timestamp = null, ?DistributedTracingData $distributedTracingData = null): ?TransactionInterface

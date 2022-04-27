@@ -55,6 +55,7 @@ class ElasticApmExtension extends Extension
                     '$shouldCollectMemoryUsage' => $config['track_memory_usage'],
                     '$memoryUsageLabelName' => $config['memory_usage_label'],
                     '$shouldExplicitlyCollectCommandExceptions' => $config['commands']['explicitly_collect_exceptions'],
+                    '$shouldUnwrapExceptions' => $config['exceptions']['unwrap_exceptions'],
                 ]
             );
 

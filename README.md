@@ -68,6 +68,7 @@ elastic_apm:
     memory_usage_label: memory_usage      # The name of the custom label to write memory usage to
     exceptions:
        enabled: true                      # If true, sends exceptions (default: true)
+       should_unwrap_exceptions: false    # If true, will also sends the previous/nested exception (default: false)
        ignored_exceptions:                # List of exception classes to ignore
           - An\Ignored\Exception
     http:
