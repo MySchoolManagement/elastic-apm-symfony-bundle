@@ -41,11 +41,16 @@ class ResponseListener implements EventSubscriberInterface
 
     public function onKernelResponse(KernelResponseEvent $event): void
     {
-        if (! $event->isMasterRequest()) {
+        if (! $this->isMainRequest($event)) {
             return;
         }
 
         $this->interactor->addContextFromConfig();
+    }
+
+    private function isMainRequest(KernelResponseEvent $event): bool
+    {
+        return method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
     }
 }
 
