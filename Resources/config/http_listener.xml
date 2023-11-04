@@ -7,7 +7,6 @@
     <services>
         <defaults autowire="true" autoconfigure="true" public="false" />
 
-        <service id="ElasticApmBundle\Listener\RequestListener"/>
-        <service id="ElasticApmBundle\Listener\ResponseListener"/>
+        <service id="ElasticApmBundle\Listener\FinishRequestListener"/>
     </services>
 </container>

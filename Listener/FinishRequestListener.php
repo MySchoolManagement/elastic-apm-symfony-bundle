@@ -16,12 +16,10 @@ namespace ElasticApmBundle\Listener;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 use ElasticApmBundle\TransactionNamingStrategy\TransactionNamingStrategyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class RequestListener implements EventSubscriberInterface
+class FinishRequestListener implements EventSubscriberInterface
 {
     private $interactor;
     private $transactionNamingStrategy;
@@ -37,36 +35,36 @@ class RequestListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => [
-                ['setTransactionName', -10],
+            // We set the transaction name at the end to be sure the listener gets called.
+            // When using KernelEvents::REQUEST it could be skipped due to the stop propagation.
+            // We need to be called before the RouterListener to be able to set the transaction name.
+            // We also use the finish request as this service is not relevant for the request and
+            // in system not using php-fpm this could be done after the request was sent to the client.
+            KernelEvents::FINISH_REQUEST => [
+                ['onFinishRequest', 255],
             ],
         ];
     }
 
-    public function setTransactionName(KernelRequestEvent $event): void
+    public function onFinishRequest(FinishRequestEvent $event): void
     {
-        if (! $this->isEventValid($event)) {
+        if (! $this->isMainRequest($event)) {
             return;
         }
 
+        $this->setTransactionName($event);
+        $this->interactor->addContextFromConfig();
+    }
+
+    private function setTransactionName(FinishRequestEvent $event): void
+    {
         $transactionName = $this->transactionNamingStrategy->getTransactionName($event->getRequest());
 
         $this->interactor->setTransactionName($transactionName);
     }
 
-    /**
-     * Make sure we should consider this event. Example: make sure it is a master request.
-     */
-    private function isEventValid(KernelRequestEvent $event): bool
+    private function isMainRequest(FinishRequestEvent $event): bool
     {
-        return HttpKernelInterface::MASTER_REQUEST === $event->getRequestType();
-    }
-}
-
-if (! \class_exists(KernelRequestEvent::class)) {
-    if (\class_exists(RequestEvent::class)) {
-        \class_alias(RequestEvent::class, KernelRequestEvent::class);
-    } else {
-        \class_alias(GetResponseEvent::class, KernelRequestEvent::class);
+        return method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
     }
 }
