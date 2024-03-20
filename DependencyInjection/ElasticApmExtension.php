@@ -19,7 +19,6 @@ use ElasticApmBundle\Interactor\Config;
 use ElasticApmBundle\Interactor\ElasticApmInteractor;
 use ElasticApmBundle\Interactor\ElasticApmInteractorInterface;
 use ElasticApmBundle\Listener\ExceptionListener;
-use ElasticApmBundle\Listener\ResponseListener;
 use ElasticApmBundle\TransactionNamingStrategy\ControllerNamingStrategy;
 use ElasticApmBundle\TransactionNamingStrategy\RouteNamingStrategy;
 use ElasticApmBundle\TransactionNamingStrategy\TransactionNamingStrategyInterface;

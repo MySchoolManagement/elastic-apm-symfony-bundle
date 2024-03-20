@@ -19,6 +19,9 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ElasticApmBundle extends Bundle
 {
+    /**
+     * @return void
+     */
     public function boot()
     {
         parent::boot();
@@ -32,6 +35,9 @@ class ElasticApmBundle extends Bundle
         }
     }
 
+    /**
+     * @return void
+     */
     public function shutdown()
     {
         if ($this->container->has(DeprecationListener::class)) {
